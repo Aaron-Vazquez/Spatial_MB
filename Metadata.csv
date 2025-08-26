@@ -1,0 +1,8 @@
+label,Patient,Sample,Dx,Histo,Run
+G3-1,G3,A,Group 3,MB classic,2
+SHH-1,SHH,A,SHH,MB nodular/desmoplastic variant,2
+SHH-2,SHH,A,SHH,MB anaplastic,2
+SHH-3A,SHH,A,SHH,MB extensive nodularity,1
+SHH-3B,SHH,B,SHH,MB extensive nodularity,1
+G4-1A,G4,A,Group 4,MB extensive nodularity,1
+G4-1B,G4,B,Group 4,MB extensive nodularity,2
