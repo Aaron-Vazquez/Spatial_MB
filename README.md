@@ -18,10 +18,10 @@ The [pipeline](Pipeline.md) is structured as follows:
   - [Experimental protocol](Pipeline.md#experimental-protocol)
   - [Molecular Genotyping](Pipeline.md#Molecular-genotyping)
   - [Data](Pipeline.md#Data)
-* [Knee filter](Pipeline/pipeline.md#knee-filter)
-* [Gene Over-dispersion](Pipeline/pipeline.md#gene-over-dispersion)
-* [Gene number selection](Pipeline/pipeline.md#gene-number-selection)
-* [Dimensionality Reduction](Pipeline/pipeline.md#Dimensionality-Reduction)
-* [Clustering](Pipeline/pipeline.md#Clustering)
-  - [Kmeans](Pipeline/pipeline.md#kmeans)
-  - [EM](pipeline.md#expectation-maximization-algorithm)
+* [Macro-Scale Analysis](Macro.md#macro-scale-analysis)
+  - [DGE approach](Macro.md#dimensionality-reduction-and-dge-analysis)
+  - [Machine Learning model](Macro.md#machine-learning-models)
+* [Meso-Scale Analysis]()
+* [Micro-Scale Analysis]()
+
+

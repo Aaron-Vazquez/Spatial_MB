@@ -12,6 +12,26 @@ from matplotlib import pyplot
 import os
 import shap
 
+####### Custom Functions ########
+#################################
+#### confussion matrix plot function
+def plot_confusion_matrix(cm, classes,  cmap, normalized=True): # 'bone'
+    plt.figure(figsize=[7, 6])
+    norm_cm = cm
+    if normalized:
+        norm_cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+        where_are_NaNs = np.isnan(norm_cm)
+        norm_cm[where_are_NaNs] = 0
+#        print(norm_cm)
+        sns.heatmap(norm_cm, annot=cm, fmt='g', xticklabels=classes, yticklabels=classes, cmap=cmap)
+        pyplot.savefig('Results/ML/figures/confusematrix_'+str(j)+'.png',dpi=800)
+#### Spots classification
+def classification(value):
+        if sum(value)==0 or sum(value)>1:
+            val = 3
+        else:
+            val = np.where(value==1)[0][0]
+        return val
 #######################################################################################
 # Preparation of Matrix 
 # Load data (X and Y)
@@ -29,18 +49,24 @@ X = pd.read_csv('./Results/ML/Data_counts.csv',
 Y = pd.read_csv('./Results/ML/classes.csv',
                 header = 0);
 
-#Y = pd.read_csv('./Results/ML/labels.tsv',
-#                sep='\t', header=None)
-### sctranformed data
-#X_sct = pd.read_csv('./Data/MCTS_sct.csv', 
+### scaled data 
+#X_sld = pd.read_csv('./Data/Data_data.csv', 
 #                header = 0, index_col = 0);
 
-### scaled data (lop1p(RPKM))
-#X_sld = pd.read_csv('./Data/MCTS_scaled.csv', 
-#                header = 0, index_col = 0);
+## Saving folders
+# Data
+os.system('mkdir Results/ML/Splited_data')
+# Model
+os.system('mkdir Results/ML/Model')
+# figures
+os.system('mkdir Results/ML/figures')
+# Shap values
+os.system('mkdir Results/ML/SHAP_values')
 
+##random numer
 random = [0,1,2,3,12]
 ###############################################################################################################
+## k-fold cross-validation (5 times)
 for j in range(5):
 
 #Split the data and Save X, y train and test.
@@ -56,7 +82,6 @@ for j in range(5):
     # Y_test.plot.hist(grid=True, bins=3, rwidth=0.9)
     
     
-    os.system('mkdir .  /Results/ML/Splited_data')
     pickle.dump(X_train, open("Results/ML/Splited_data/X_train_"+str(j)+".pickle", 'wb'), protocol=4);
     pickle.dump(X_test, open("Results/ML/Splited_data/X_test_"+str(j)+".pickle", 'wb'), protocol=4);
     
@@ -106,13 +131,7 @@ for j in range(5):
     pred_data.to_csv('Results/ML/figures/prediction_'+str(j)+'.csv', index=True)
     predictions = [np.round(value) for value in pred]
     
-    def classification(value):
-        if sum(value)==0 or sum(value)>1:
-            val = 3
-        else:
-            val = np.where(value==1)[0][0]
-        return val
-    
+
     Pred_vals = [classification(value) for value in predictions]
     print(classification_report(Y_test, Pred_vals, 
                                 zero_division = "warn"))
@@ -121,18 +140,7 @@ for j in range(5):
     
     cmap = plt.get_cmap('Blues')
     
-    os.system('mkdir Results/ML/figures')
     
-    def plot_confusion_matrix(cm, classes, normalized=True, cmap=cmap): # 'bone'
-        plt.figure(figsize=[7, 6])
-        norm_cm = cm
-        if normalized:
-            norm_cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
-            where_are_NaNs = np.isnan(norm_cm)
-            norm_cm[where_are_NaNs] = 0
-    #        print(norm_cm)
-            sns.heatmap(norm_cm, annot=cm, fmt='g', xticklabels=classes, yticklabels=classes, cmap=cmap)
-            pyplot.savefig('Results/ML/figures/confusematrix_'+str(j)+'.png',dpi=800)
     
     # os.system('mkdir figures')
     
@@ -142,7 +150,7 @@ for j in range(5):
     # pickle.dump(cm, pickle_out)
     # pickle_out.close()
     
-    plot_confusion_matrix(cm, ['Grupo4', 'SHH','Grupo3','Undefined'])
+    plot_confusion_matrix(cm, ['Group4', 'SHH','Group3','Undefined'], cmap=cmap)
     # pyplot.savefig('figures/confusematrix_raw.png',dpi=800) 
     print('Confuse matrix saved!')
     
@@ -165,29 +173,15 @@ for j in range(5):
     ## a = np.mean(np.abs(shap_values[1]), axis = 0)
     ## b = np.argsort(a)
     ## X.columns[np.flip(b)]
-    os.system('mkdir Results/ML/SHAP_values')
-    letters = ['Grupo4', 'SHH','Grupo3']
+    
+    letters = ['Group4', 'SHH','Group3']
     for i in range(3):
         a = np.mean(np.abs(shap_values[i]), axis = 0)
         b = np.argsort(a)
         d = {'Gene':X.columns[np.flip(b)], 
               'Shap':a[np.flip(b)]}
         df = pd.DataFrame(data=d)
-        df.to_csv("SHAP_values/SHAP_"+letters[i]+"_"+str(j)+".csv")
+        df.to_csv("Results/ML/SHAP_values/SHAP_"+letters[i]+"_"+str(j)+".csv")
     #    print(X.columns[np.flip(b)][0:10])
         print(df)
     ############
-# # Save shap_values
-# os.system('mkdir pickle_shap')
-# pickle.dump(shap_values, open("pickle_shap/shap_values.pickle", 'wb'), protocol=4);
-
-# X_display = X
-
-# plt.clf()
-# shap.summary_plot(shap_values, X)
-# pyplot.savefig('figures/shap_summary1.png',format='png', dpi=800)
-
-# plt.clf()
-# shap.summary_plot(shap_values, X, plot_type="bar")
-# pyplot.savefig('figures/shap_summary1_bar.png',format='png', dpi=800, bbox_inches='tight')
-# print('Shap plots saved!!')
